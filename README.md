@@ -1,6 +1,6 @@
 # Creating-an-AWS-Three-Tier-Web-Application
 This project sets up a secure and scalable three-tier architecture on AWS using a Virtual Private Cloud (VPC). It includes Amazon RDS for the database tier, EC2 instances for the application and web tiers, and integrates a load balancer with autoscaling for optimized performance, traffic distribution, and high availability.
-
+![Screenshot 2025-07-03 021543](https://github.com/user-attachments/assets/32c76434-59c0-4640-99d2-5938fcd6ee0b)
 # OBJECTIVE 
 To architect and deploy a production-ready, highly available e-commerce web application on AWS using a secure and scalable three-tier architecture. This project demonstrates proficiency in AWS infrastructure design by integrating:
 
@@ -60,6 +60,6 @@ Stores and retrieves application data.
 Ensures data security, integrity, and high availability.
 
 Accessible only by the application tier through secure connections.
-![Screenshot 2025-07-03 021543](https://github.com/user-attachments/assets/32c76434-59c0-4640-99d2-5938fcd6ee0b)
+
 
 
