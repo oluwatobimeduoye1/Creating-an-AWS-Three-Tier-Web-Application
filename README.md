@@ -147,3 +147,32 @@ Configure a launch template and Auto Scaling Group for the web tier
 
 - Auto Scaling: AWS Auto Scaling automatically adjusts computing resources to maintain application performance while optimizing costs.
 
+## Setting Up Resources
+- Download project code from GitHub
+- Create an S3 bucket for asset storage ![Screenshot 2025-07-03 031442](https://github.com/user-attachments/assets/898534bc-d194-4da8-b97b-543e08d13982)
+- Create an IAM role for EC2 instances with necessary permissions ![Screenshot 2025-07-03 030357](https://github.com/user-attachments/assets/c6ca24d7-39c8-4fa0-bdc8-ba483c969b05) ![Screenshot 2025-07-03 030507](https://github.com/user-attachments/assets/b9093d3d-d17b-4edd-9be2-7676885d5da2) ![Screenshot 2025-07-03 030610](https://github.com/user-attachments/assets/738e04db-535f-4087-9e10-cb6b68e75789)
+- Configure VPC
+1. Create VPC ![Screenshot 2025-07-03 032730](https://github.com/user-attachments/assets/4a661131-372b-43a4-8379-033b8bbc658c)
+2.  Create subnet. ![Screenshot 2025-07-03 034239](https://github.com/user-attachments/assets/f9d3dd56-a331-44d8-bc6d-13224b17ee9b) ![Screenshot 2025-07-03 034314](https://github.com/user-attachments/assets/dc7d6eaf-b964-4cfe-9f54-ff85059081a9) ![Screenshot 2025-07-03 034404](https://github.com/user-attachments/assets/cac8fb47-ecad-4d84-a8ff-1f1729bece1c) ![Screenshot 2025-07-03 034622](https://github.com/user-attachments/assets/5d62b907-29b3-45fa-a774-663094a342d5)
+- create and attach an Internet Gateway.
+![Screenshot 2025-07-03 035221](https://github.com/user-attachments/assets/87ecbcd3-4e27-4d42-8aec-581233dad137) ![Screenshot 2025-07-03 035301](https://github.com/user-attachments/assets/9ba76380-606b-4807-89ee-20304a72b780) ![Screenshot 2025-07-03 040315](https://github.com/user-attachments/assets/7c9e3945-5cdb-432f-bf7d-74a16a88109a) ![Screenshot 2025-07-03 040417](https://github.com/user-attachments/assets/d7388a08-7533-43ba-9bea-3002f4377deb)
+- Create NAT Gateway: As we have 2 public subnets, we require 2 NAT Gateways
+![Screenshot 2025-07-03 041354](https://github.com/user-attachments/assets/1ad2ebf1-b66b-4c58-b1a9-4d8e548f5070) ![Screenshot 2025-07-03 041743](https://github.com/user-attachments/assets/bcbdd769-c36d-455a-a1d7-f6cb4a03fa35) ![Screenshot 2025-07-03 042059](https://github.com/user-attachments/assets/01672b4b-1f56-4854-81a4-bbf04d532882)
+- Routing Configuration :
+we will create the route tables one for web tier and the other for app tier. The Public Route table will help us to route the traffic from the VPC to the Internet gateway.
+Whereas Private Route Table will route app layer traffic destined for outside the VPC to the NAT gateway in the respective availability zone.
+#### Public route table
+![Screenshot 2025-07-03 042957](https://github.com/user-attachments/assets/8f92f9ec-b951-4991-8f45-bbb21417848f) ![Screenshot 2025-07-03 043043](https://github.com/user-attachments/assets/6a1e532e-716a-4834-947f-ca7d00881873) 
+#### Edit routes.
+By adding a Route that directs traffic from the VPC to the internet gateway. In other words, for all traffic destined for IPs outside the VPC CIDR range, add an entry that directs it to the internet gateway as a target  ![Screenshot 2025-07-03 044004](https://github.com/user-attachments/assets/747b9c3b-3ac8-41a1-8ef4-eee6b2718ddf) ![Screenshot 2025-07-03 044417](https://github.com/user-attachments/assets/0d7aa43e-3530-414e-9997-caa2cd3c7f81)
+
+#### Edit the Subnet Associations of the route table
+![Screenshot 2025-07-03 044918](https://github.com/user-attachments/assets/16ecb1cd-f3bd-41f2-8592-275a1c6da862) ![Screenshot 2025-07-03 045049](https://github.com/user-attachments/assets/b091b3ed-7e5a-4c1d-9d9b-5466e71b886c) ![Screenshot 2025-07-03 045444](https://github.com/user-attachments/assets/a91669e0-ac4d-4dc4-9451-669ef1c96c96)
+
+
+
+
+
+
+ 
+
