@@ -169,8 +169,35 @@ By adding a Route that directs traffic from the VPC to the internet gateway. In 
 #### Edit the Subnet Associations of the route table
 ![Screenshot 2025-07-03 044918](https://github.com/user-attachments/assets/16ecb1cd-f3bd-41f2-8592-275a1c6da862) ![Screenshot 2025-07-03 045049](https://github.com/user-attachments/assets/b091b3ed-7e5a-4c1d-9d9b-5466e71b886c) ![Screenshot 2025-07-03 045444](https://github.com/user-attachments/assets/a91669e0-ac4d-4dc4-9451-669ef1c96c96)
 
+#### Private route table
+Now create an app layer private subnet. These route tables will route app layer traffic destined for outside the VPC to the NAT gateway in the respective availability zone
+![Screenshot 2025-07-04 035202](https://github.com/user-attachments/assets/26dccf6e-d5cd-4d6c-9759-bf19cbf492b3) ![Screenshot 2025-07-04 035251](https://github.com/user-attachments/assets/daab7b36-e2d0-40ad-bea2-086490bb4649)
 
+#### Edit PRIVATE routes.
+Click on Add route and enter the destination as 0.0.0.0/0 and select the NAT Gateway as Target and select the NAT-GW-AZ1 and click on save changes.
+![Screenshot 2025-07-04 035931](https://github.com/user-attachments/assets/f0494ab8-d1a9-4d61-82be-962f86f1b8ce) ![Screenshot 2025-07-04 040130](https://github.com/user-attachments/assets/0048f5f5-bee3-41e7-98e7-2db9b0c8687d)
+#### Edit the Subnet Associations of the Private route table
+associate the private app subnet in az1
+![Screenshot 2025-07-04 041620](https://github.com/user-attachments/assets/be0adaf7-45ad-4ca1-91b7-357a45204933) ![Screenshot 2025-07-04 041933](https://github.com/user-attachments/assets/372a560c-a344-4cb9-99e0-a512ac4a4902) 
+- Create Security Groups
+Security groups will tighten the rules around which traffic will be allowed to our Elastic Load Balancers and EC2 instances
+##### The first security group to create is for the public, internet facing load balancer. Enter the name as internet-facing-lb-sg and description as External Loadbalancer SG.
+![Screenshot 2025-07-04 042922](https://github.com/user-attachments/assets/bbf09836-39a7-43e3-9e85-02f81a8e4562) ![Screenshot 2025-07-04 042922](https://github.com/user-attachments/assets/71413096-8460-4154-8d1c-c4a87cc02044)
+##### The second security group you’ll create is for the public instances in the web tier. This allows inbound traffic from internet-facing-lb-sg and My IP address
+![Screenshot 2025-07-04 044059](https://github.com/user-attachments/assets/9a5c2ec9-da27-4082-94b5-167636bc64fb) ![Screenshot 2025-07-04 044210](https://github.com/user-attachments/assets/5d9871bf-0d84-42d6-97ac-6298258f0f8c)
+##### Next,  create Internal Loadbalancing Security Group that allows http traffic from web-tier sg
+![Screenshot 2025-07-04 045001](https://github.com/user-attachments/assets/8d93cbc5-1aed-4f0a-84df-3b01d333608a) ![Screenshot 2025-07-04 045115](https://github.com/user-attachments/assets/7e7c9ae6-3784-4667-a987-21661ed62adf)
 
+##### The fourth security group we’ll configure is for our private instances. 4000 is the port our app tier application is running on and allows our internal load balancer to forward traffic on this port to our private instances. You should also add another route for port 4000 that allows MY IP for testing.
+![Screenshot 2025-07-04 050126](https://github.com/user-attachments/assets/390a6236-b734-4370-bfad-ba588cecd2d1) ![Screenshot 2025-07-04 050213](https://github.com/user-attachments/assets/4b15d9bb-2a29-4833-bc79-841db3f54a1c) ![Screenshot 2025-07-04 050426](https://github.com/user-attachments/assets/7808ffb9-c144-4f63-984c-25521e6c2d99)
+##### The fifth security group we’ll configure protects our private database instances. For this security group, add an inbound rule that will allow traffic from the private instance security group to the MYSQL/Aurora port (3306).
+![Screenshot 2025-07-04 051205](https://github.com/user-attachments/assets/c204d572-a934-4597-ac31-f3e09b8f10d7) ![Screenshot 2025-07-04 051255](https://github.com/user-attachments/assets/e045a4a0-f969-46d3-9dfc-7c4d7e1e21cd)
+
+- Database Deployment
+#####  Create DB subnet group
+![Screenshot 2025-07-04 053431](https://github.com/user-attachments/assets/c4fc29ee-c6db-4369-b777-4c3c0b27153c) ![Screenshot 2025-07-04 053657](https://github.com/user-attachments/assets/87d5b15d-d5ea-4950-95da-c89e262075b6)
+
+##### Create Aurora MySQL-Compatible
 
 
 
