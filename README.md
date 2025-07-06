@@ -197,9 +197,97 @@ Security groups will tighten the rules around which traffic will be allowed to o
 #####  Create DB subnet group
 ![Screenshot 2025-07-04 053431](https://github.com/user-attachments/assets/c4fc29ee-c6db-4369-b777-4c3c0b27153c) ![Screenshot 2025-07-04 053657](https://github.com/user-attachments/assets/87d5b15d-d5ea-4950-95da-c89e262075b6)
 
-##### Create Aurora MySQL-Compatible
+##### Create Aurora MySQL-Compatible Databse with a replica
+![Screenshot 2025-07-05 223445](https://github.com/user-attachments/assets/173790db-871d-467b-b955-a95b3bff7586) ![Screenshot 2025-07-05 224659](https://github.com/user-attachments/assets/6407168f-a12c-498e-8c4d-bbb19ecd20f8) ![Screenshot 2025-07-05 230855](https://github.com/user-attachments/assets/df8025eb-c587-42cc-b2ba-3e30485d423b)
+
+
+- Deploying App Tier Instance
+we will create an EC2 instance for our app layer and make all necessary software configurations so that the app can run. The app layer consists of a Node.js application that will run on port 4000. We will also configure our database with some data and tables.
+##### Launch Ec2 Instance(AppServer) in Private App subnet1 and selecting the existing SG (privateinstance-sg)
+![Screenshot 2025-07-05 232259](https://github.com/user-attachments/assets/fe5e2f1b-44bf-4347-b3b3-fd8f371cfa53) 
+##### Next,Connect to instance through session manager and switch to ec2-user with root previledge using the command 
+`` sudo -su ec2-user `` and then ping ``ping 8.8.8.8`` to confirm network is properly configured 
+![Screenshot 2025-07-05 233305](https://github.com/user-attachments/assets/ed1f8e14-ce5d-457e-b5b2-7512a8866bd5) App instance connection succesful!!!
+##### Configure Database 
+1. download the mysql CLI by executing the below commands one by one.
+``
+sudo wget https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
+sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+sudo yum install https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
+sudo yum install mysql -y
+``
+![Screenshot 2025-07-05 235012](https://github.com/user-attachments/assets/5dfad13a-2579-40b2-b48a-e0c407917937)
+2. initiate DB connection with Aurora RDS writer endpoint by running the command
+  `` mysql -h CHANGE-TO-YOUR-RDS-ENDPOINT -u CHANGE-TO-USER-NAME -p ``![Screenshot 2025-07-06 000750](https://github.com/user-attachments/assets/bccfb654-0ff4-4dc2-95e0-54504651a7b0)
+3. Create a database called webappdb with the following commands using the MySQL CLI:
+   ``` CREATE DATABASE webappdb;   
+       SHOW DATABASES;
+       USE webappdb; ```
+  ![Screenshot 2025-07-06 001509](https://github.com/user-attachments/assets/59c8ac59-7514-4bcf-aac5-d08dbd74ae93)
+4.  create the following transactions table and insert data into the table by executing the command to create table and insert data:
+     CREATE TABLE IF NOT EXISTS transactions(id INT NOT NULL
+     AUTO_INCREMENT, amount DECIMAL(10,2), description
+     VARCHAR(100), PRIMARY KEY(id));
+     SHOW TABLES;
+![Screenshot 2025-07-06 002020](https://github.com/user-attachments/assets/f30be9cc-317f-4505-9345-7b6e7a80ab75)
+
+
+insert data command
+``` INSERT INTO transactions (amount,description) VALUES ('400','groceries');  
+    SELECT * FROM transactions;
+```
+![Screenshot 2025-07-06 003508](https://github.com/user-attachments/assets/752235a4-5aa2-4559-8375-4c536c569954)
+Database successfully configure!!!
+
+##### Configure App Instance
+1. update our database credentials for the app tier. To do this, open the application-code/app-tier/DbConfig.js file from the GitHub repo in your favorite text editor on your computer. fill empty strings with the credentials you configured for your database, the writer endpoint of your database as the hostname, and webappdb for the database. Save the file.
+2. Upload the app-tier folder to the S3 bucket which we have created
+![Screenshot 2025-07-06 005002](https://github.com/user-attachments/assets/3a404504-3ffe-47f9-bf2a-404f089e07c1) ![Screenshot 2025-07-06 005122](https://github.com/user-attachments/assets/b09b946e-69c5-4b4e-b845-025631dc3a25) ![Screenshot 2025-07-06 005209](https://github.com/user-attachments/assets/8a710c25-2f15-4d03-aa5d-d52ccd8f12e1)
+3. install all of the necessary components to run our backend application.
+    Start by installing NVM (node version manager).
+```curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+source ~/.bashrc
+```
+![Screenshot 2025-07-06 005804](https://github.com/user-attachments/assets/0d1e6872-a0fb-4f89-b8bf-7979860db674)
+#Install nvm by executing the commands
+```nvm install 16
+   nvm use 16
+```
+![image](https://github.com/user-attachments/assets/6a46c36b-abb3-45ad-a734-fd8179ad207a)
+4. install PM2 a daemon process manager that will keep our node.js app running when we exit the instance or if it is rebooted. using:
+``` npm install -g pm2 ```
+![Screenshot 2025-07-06 011821](https://github.com/user-attachments/assets/9db31430-02fb-43ab-841e-c106a8047963)
+5. cd into home directory and then copy all object in app-tier folder in our s3 bucket to the local dicrectory usuing the command:
+ ``` aws s3 cp s3://BUCKET_NAME/app-tier/ app-tier --recursive  ```
+ ![Screenshot 2025-07-06 012517](https://github.com/user-attachments/assets/263bd3c8-d9eb-4f28-acbd-f95862e5f44c)
+
+6. Next install all necessary dependencies required for this Nodejs using
+   ``` npm install ```
+![Screenshot 2025-07-06 013200](https://github.com/user-attachments/assets/3e771513-2c3b-4e87-abc2-72eb02afe439)
+
+7. start the Node.js app with pm2
+   run the command
+   ```pm2 start index.js```
+![Screenshot 2025-07-06 013743](https://github.com/user-attachments/assets/a8e9327d-1c7e-43ba-86a6-ea0353e7b67f)
+   Then run ``` pm2 startup ``` to start and keep the application running
+![Screenshot 2025-07-06 015027](https://github.com/user-attachments/assets/779f42f0-ec79-4ddf-b188-358dea769053)
+
+8. copy and paste the command in output "sudo env PATH=$PATH:/home/ec2-user/.nvm/versions/node/v16.20.2/bin /home/ec2-user/.nvm/versions/node/v16.20.2/lib/node_modules/pm2/bin/pm2 startup systemd -u ec2-user --hp /home/ec2-user"
+![Screenshot 2025-07-06 015519](https://github.com/user-attachments/assets/d447f3a3-fe1b-457a-ab42-950fe771e30b)
+9. Run ```pm2 save``` to save the configuration.
+![Screenshot 2025-07-06 015741](https://github.com/user-attachments/assets/5ccc64d6-e199-42ed-82bb-4d61adddd759)
+
+-- Test App Tier
+Run a couple tests to see if our app is configured correctly and can retrieve data from the database.
+1. check health of the webserver by running
+   ``` curl http://localhost:4000/health ```
+![Screenshot 2025-07-06 015741](https://github.com/user-attachments/assets/b547abcc-76ba-43a2-acf8-9195eba415fe) health checked worked !!! thus app layer is fully configured
+
+- Configure Internal Load Balancer And Auto Scaling
 
 
 
- 
+
+
+
 
