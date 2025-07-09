@@ -284,6 +284,52 @@ Run a couple tests to see if our app is configured correctly and can retrieve da
 ![Screenshot 2025-07-06 015741](https://github.com/user-attachments/assets/b547abcc-76ba-43a2-acf8-9195eba415fe) health checked worked !!! thus app layer is fully configured
 
 - Configure Internal Load Balancer And Auto Scaling
+Create App Tier AMI, Target Group , internal load balancer(ALB), Launch Template, and Auto scaling group
+![Screenshot 2025-07-06 024845](https://github.com/user-attachments/assets/53389242-5eff-4410-a43b-2c1d8fdd26f5) ![Screenshot 2025-07-06 024927](https://github.com/user-attachments/assets/b4f44187-6de7-4071-87fa-aa6ac1f04b41) ![Screenshot 2025-07-06 025837](https://github.com/user-attachments/assets/ba43996f-dbc0-4e63-b207-261ae3e862f7) ![Screenshot 2025-07-06 030725](https://github.com/user-attachments/assets/8866b767-9c6c-4cf6-9930-102782456f0e) ![Screenshot 2025-07-06 031344](https://github.com/user-attachments/assets/e6babe21-c7cb-458c-9c2a-e0d824d90bbe)
+
+- Deploying Web Tier Instance
+ we will deploy an EC2 instance for the web tier and make all necessary software configurations for the NGINX web server and React.js website
+![Screenshot 2025-07-08 002806](https://github.com/user-attachments/assets/931e53d1-7d02-464d-b198-a6f653748613)
+##### Configure Web Instance
+We need to install all the necessary components needed to run our front-end application. Again, start by installing NVM and node using the below commands 
+```curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+source ~/.bashrc
+nvm install 16
+nvm use 16
+```
+![Screenshot 2025-07-08 003220](https://github.com/user-attachments/assets/d1e8ed9e-2a33-4893-9e6f-ac48583c2aaf)
+##### Now we need to download our web tier code from our s3 bucket.
+``` cd ~/
+    aws s3 cp s3://3tweb-bucket/web-tier/ web-tier --recursive
+```
+#####  create the build folder for the react app so we can serve our code.
+run command 
+```cd ~/web-tier
+   npm install 
+   npm run build
+```
+The command npm install is used to install the dependencies required for the project.
+![Screenshot 2025-07-08 010712](https://github.com/user-attachments/assets/38984f1c-608a-4364-aee2-9db97ded4ec7) ![Screenshot 2025-07-08 014727](https://github.com/user-attachments/assets/edbe2e3a-c431-4a5f-adea-d4dafbc14448)
+##### Install Nginx
+![Screenshot 2025-07-08 015237](https://github.com/user-attachments/assets/36069957-f8af-4078-b2af-c1fc808140c0) ![Screenshot 2025-07-08 015346](https://github.com/user-attachments/assets/356b9686-8d62-4425-b9f0-3d5425414e03)
+##### configure NGINX
+``` cd /etc/nginx
+    ls -l
+    sudo cp nginx.conf nginx.conf_bkp
+    sudo aws s3 cp s3://3tweb-bucket/nginx.conf 
+```
+![Screenshot 2025-07-08 020633](https://github.com/user-attachments/assets/f276ff9d-a1d5-4184-935a-69ee01e806bc)
+
+##### Restart the service and give the permissions to access the files
+``` sudo service nginx restart
+    chmod -R 755 /home/ec2-user
+    sudo chkconfig nginx on
+```
+![Screenshot 2025-07-08 021247](https://github.com/user-attachments/assets/6613ecfb-540e-48c2-8147-cf467eb0babe)
+
+- Configuring External Load Balancer And Auto Scaling
+![Screenshot 2025-07-08 022138](https://github.com/user-attachments/assets/df8fd1d3-8a75-46bf-b9d4-648206b27e12)
+
 
 
 
