@@ -1,0 +1,10 @@
+#sudo -su ec2-userTo download the MySQL run sudo wget https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm. When downloading files from the internet, wget is used, and sudo is used to run the command as root.
+#By running "sudo rpm --import", you import the key from the specified URL (http://repo.mysql.com/RPM-GPG-KEY-mysql-2022)this key is typically used to verify their authenticity and integrity.
+#The command sudo yum install https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm is used to install the MySQL Package.
+#The "sudo yum install mysql -y" command is used to install the MySQL database management system on a Linux system.
+``
+sudo wget https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
+sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+sudo yum install https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
+sudo yum install mysql -y
+``
