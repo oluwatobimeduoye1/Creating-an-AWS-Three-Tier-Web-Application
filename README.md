@@ -62,55 +62,47 @@ Ensures data security, integrity, and high availability.
 Accessible only by the application tier through secure connections.
 
 ## This activity guide cover steps for:
- 1. Setting Up Resources
-✅ Download project code from GitHub
+- Setting Up Resource
+ 1. Download project code from GitHub
+ 2. Create an S3 bucket for asset storage
+ 3. Create an IAM role for EC2 instances with necessary permissions
+    - Configuring the VPC
+1. Create a custom VPC and public/private subnets
+2. Enable internet connectivity via Internet Gateway
+3. Configure route tables for public and private traffic
+4. Set up Security Groups for web, app, and DB tiers
 
-✅ Create an S3 bucket for asset storage
+- Database Deployment
+  1. Create DB subnet groups within private subnets
+  2. Deploy Amazon Aurora MySQL cluster
+  3. Ensure DB is only accessible from the application tier
 
-✅ Create an IAM role for EC2 instances with necessary permissions
+- Application Tier Deployment
+  1. Launch EC2 instance in private subnet
 
-🌐 2. Configuring the VPC
-✅ Create a custom VPC and public/private subnets
+2. Connect to the instance securely
 
-✅ Enable internet connectivity via Internet Gateway
+3. Configure the database connection in environment variables
 
-✅ Configure route tables for public and private traffic
+4. Deploy and start the Node.js application
 
-✅ Set up Security Groups for web, app, and DB tiers
+5. Verify communication between app and database
 
-🗄️ 3. Database Deployment
-✅ Create DB subnet groups within private subnets
+- Internal Load Balancer & Auto Scaling (App Tier)
+  1. Create a custom AMI from the configured app instance
 
-✅ Deploy Amazon Aurora MySQL cluster
+2. Set up a target group for the app tier
 
-✅ Ensure DB is only accessible from the application tier
+3. Deploy an internal Application Load Balancer (ALB)
 
-⚙️ 4. Application Tier Deployment
-✅ Launch EC2 instance in private subnet
+4. Create a launch template and Auto Scaling Group for dynamic scaling
 
-✅ Connect to the instance securely
-
-✅ Configure the database connection in environment variables
-
-✅ Deploy and start the Node.js application
-
-✅ Verify communication between app and database
-
-📶 5. Internal Load Balancer & Auto Scaling (App Tier)
-✅ Create a custom AMI from the configured app instance
-
-✅ Set up a target group for the app tier
-
-✅ Deploy an internal Application Load Balancer (ALB)
-
-✅ Create a launch template and Auto Scaling Group for dynamic scaling
-
-🌍 6. Web Tier Deployment
+- Web Tier Deployment
 Update web tier configuration files
 Launch EC2 instance in public subnet
 connect and configure Apache to forward requests to the internal load balancer
 
-☁️ 7. External Load Balancer & Auto Scaling (Web Tier)
+- External Load Balancer & Auto Scaling (Web Tier)
 Create a custom AMI from the configured web instance
 Set up a target group for the web tier
 Deploy an internet-facing Application Load Balancer
